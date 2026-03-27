@@ -1,0 +1,106 @@
+{
+  "$schema": "https://margam.ai/schemas/domain-spec/v1",
+  "version": "1.0",
+  "description": "Schema for a Margam Physics Commons domain specification. This file is generated from DOMAIN_TEMPLATE.md by Claude Code or by hand.",
+
+  "domain": {
+    "name": "string — short identifier, no spaces (e.g. 'icu_hypotension', 'turbine_fatigue')",
+    "description": "string — one sentence describing the physical system",
+    "ground_truth_signal": "string — what 'the physics was right' means (e.g. 'MAP stayed above 65 mmHg for 15 minutes')",
+    "ground_truth_threshold": "number — the numeric threshold for the ground truth signal",
+    "ground_truth_direction": "string — 'above' or 'below' (is the good state above or below the threshold?)",
+    "prediction_horizon_minutes": "number — how far ahead the deviation score should predict (default: 15)"
+  },
+
+  "dataset": {
+    "name": "string — dataset name",
+    "source": "string — URL or 'private/federated'",
+    "n_cases": "number — approximate number of cases or episodes",
+    "time_resolution_minutes": "number — how often measurements are recorded",
+    "access": "string — 'public', 'dua_required', 'irb_required', 'proprietary'"
+  },
+
+  "input_channels": [
+    {
+      "name": "string — channel name in your domain",
+      "ode_channel": "string — which of the 25 ODE channels this maps to (see channel_map below)",
+      "units": "string — measurement units",
+      "normal_range": [0, 0],
+      "notes": "string — optional context about this channel"
+    }
+  ],
+
+  "channel_map": {
+    "description": "The 25 ODE input channels. Map your domain's signals to these.",
+    "cardiovascular": [
+      "map_mmhg",
+      "sbp_mmhg",
+      "dbp_mmhg",
+      "hr_bpm",
+      "cvp_mmhg",
+      "co_l_min",
+      "svr_dyn_s_cm5"
+    ],
+    "respiratory": [
+      "spo2_pct",
+      "etco2_mmhg",
+      "rr_breaths_min",
+      "fio2_pct",
+      "pip_cmh2o",
+      "peep_cmh2o",
+      "tv_ml"
+    ],
+    "metabolic": [
+      "temp_c",
+      "glucose_mg_dl",
+      "lactate_mmol_l",
+      "hgb_g_dl",
+      "ph",
+      "hco3_meq_l"
+    ],
+    "pharmacokinetic": [
+      "vasopressor_mcg_kg_min",
+      "propofol_mcg_ml",
+      "fentanyl_ng_ml",
+      "vecuronium_mcg_ml",
+      "fluid_rate_ml_hr"
+    ]
+  },
+
+  "interventions": [
+    {
+      "name": "string — intervention name (e.g. 'vasopressor_bolus')",
+      "description": "string — what this intervention is",
+      "causal_direction": 1,
+      "direction_note": "number — +1 if this raises the ground truth signal, -1 if it lowers it",
+      "ode_channel": "string — which ODE channel encodes this intervention",
+      "typical_dose_units": "string — units for dosing",
+      "onset_minutes": "number — typical time to effect",
+      "duration_minutes": "number — typical duration of effect"
+    }
+  ],
+
+  "confounders": [
+    {
+      "name": "string — confounder name",
+      "description": "string — why this is a confounder (correlated with outcome but not causal)",
+      "direction": "string — 'positive' or 'negative' correlation with outcome",
+      "notes": "string — what the model might get wrong if it learns this as causal"
+    }
+  ],
+
+  "eval": {
+    "metric": "string — primary eval metric (default: 'auroc_at_horizon')",
+    "baseline_auroc": "number — the baseline model's AUROC on this domain (if known)",
+    "holdout_fraction": 0.2,
+    "stratify_by": "string — column to stratify holdout split on (e.g. 'case_id', 'patient_id')"
+  },
+
+  "contributor": {
+    "name": "string",
+    "affiliation": "string — optional",
+    "contact": "string",
+    "wallet_address": "string — for marketplace payments",
+    "domain_experience_years": "number"
+  }
+}
