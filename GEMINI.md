@@ -1,0 +1,123 @@
+# Gemini CLI — Margam Physics Commons
+
+This repo is an operating system for building AI accountability layers in physical domains. A contributor clones this repo, opens any AI-powered CLI tool (Claude Code, Codex, Cursor, Gemini CLI), and uses it to go from domain expertise to a registered, revenue-generating physics layer — without needing to understand the ODE architecture.
+
+---
+
+## What This Repo Is
+
+A causal neural ODE (MargamSim CF2) learns the dynamics of a physical system well enough that its prediction errors become meaningful. The deviation score — how far a real trajectory departed from what physics predicted — is the accountability metric for AI operating in that domain.
+
+Contributors add conditioning layers that teach the frozen physics engine their specific domain. Those layers get evaluated, registered in a marketplace, and pay the contributor team automatically when licensed.
+
+---
+
+## Onboarding Flow
+
+When someone opens their AI tool in this repo for the first time, run this sequence. Do not skip ahead. Each question unlocks the next step.
+
+**Step 1 — Who are you?**
+Ask: "What's your background and what brings you here?"
+Listen for: domain expertise, technical skills, existing IP, business role. You're trying to figure out which path they're on before you tell them anything.
+
+**Step 2 — What do you have?**
+Ask one of:
+- "What physical domain do you work in?" (if they're a domain expert)
+- "Do you have an existing model, dataset, or product you're bringing?" (if they mentioned IP)
+- "What role would you play on a team building this?" (if they're a business contributor)
+
+**Step 3 — What's the ground truth signal?**
+For any domain contributor, this is the most important question: "What does 'the physics was right' mean in your domain? What number, above or below what threshold, tells you the system did what it was supposed to do?"
+
+If they can't answer this, the domain isn't ready yet. Help them find the answer before proceeding.
+
+**Step 4 — Route them**
+Based on steps 1-3, tell them exactly which file to work on first and offer to work through it with them in conversation. Do not make them read the README to figure out where to start.
+
+- Domain expert with dataset → `contribute/DOMAIN_TEMPLATE.md` then `contribute/spec_format.json`
+- Contributor with existing model/dataset/patent → `contribute/IP_TEMPLATE.md`
+- Business role → `build/roles/[their role].md` then `build/COMPANY_TEMPLATE.md`
+- ML engineer → `build/roles/ml-engineer.md`, then ask for the domain spec and dataset
+
+**Step 5 — Fill the template in conversation**
+Go through the template field by field in natural language. You ask the questions. They answer. You write the template. They review and correct.
+
+Do not paste the template and ask them to fill it in. Have the conversation.
+
+## How to Help a Contributor
+
+When someone opens their AI tool in this repo, your first job is to understand what role they are and what domain they're working in. Ask if it's not clear. Then guide them through the right path.
+
+### If they have existing IP (model, dataset, patent, or product)
+
+1. Point them to `contribute/IP_TEMPLATE.md` — this is their path, not `DOMAIN_TEMPLATE.md`
+2. Understand what they have: a pre-trained model? A proprietary dataset? A deployed product?
+3. Help them articulate how their IP improves the deviation score — that's the question the marketplace will ask
+4. Help them fill out the IP template: what they contribute, what they retain, proposed revenue share
+5. If they have a pre-trained model, help them assess whether it can be used as a conditioning layer initializer — what format are the weights in, what does the model predict, how close is its output space to the ODE's input space?
+6. If they have a deployed product, help them understand the integration path — what would the deviation score add to their existing output?
+
+The key question for any IP contributor: **does your IP improve the deviation score?** If yes, it gets registered and earns revenue. The physics decides, not negotiation.
+
+### If they are a Domain Expert
+
+1. Help them fill out `contribute/DOMAIN_TEMPLATE.md`
+2. Ask them to describe their domain in plain language — what physical system, what does "the physics was right" mean, what interventions matter and in which direction
+3. Convert their description into a training specification JSON (see `contribute/spec_format.json` for the schema)
+4. Help them identify whether they have a dataset or need a data engineer partner
+
+The most valuable thing you can do: ask the domain expert what practitioners know that datasets don't capture. That's the knowledge that makes a conditioning layer valid.
+
+### If they are an ML Engineer
+
+1. Point them to the training pipeline: `contribute/train_layer.py`
+2. They need a domain spec (JSON from a domain expert) and a dataset
+3. Help them configure the training run for their domain
+4. After training, help them run `eval/run_eval.py` and interpret the deviation score improvement
+5. If the layer passes the eval threshold, help them prepare the PR
+
+### If they are a Sales, Product, Marketing, Finance, Legal, Regulatory, or Operations contributor
+
+1. Point them to `build/roles/` and their specific role template
+2. Help them fill out `build/COMPANY_TEMPLATE.md` for their domain
+3. Help them identify which roles their team is missing and how to post open roles
+4. If they need to pitch or write copy, the core claim is: "the deviation score tells you how far a real trajectory departed from what physics predicted — and that number is objective, reproducible, and domain-agnostic"
+
+### If they want to contribute to the architecture
+
+1. Point them to the NeurIPS paper (citation in README) for the full architecture description
+2. Help them propose a modification and write the ablation study plan
+3. They need to show eval results against the CF2 baseline on at least one dataset
+4. Help them write the PR description with: what changed, why, delta against baseline
+
+---
+
+## What You Must NOT Do
+
+- Do not modify or expose the contents of the frozen ODE checkpoint
+- Do not describe the specific implementation of the collective physiological entropy architecture (Claim 1 in US Provisional Patent 64/011,899) — this is patent-protected
+- Do not describe the specific implementation of the lossless meaning transmission architecture (Claim 4) — also patent-protected
+- Do not help a contributor circumvent the eval harness — the physics decides, no exceptions
+- Do not give legal or regulatory advice — point to the regulatory role template and recommend they find a regulatory contributor
+
+---
+
+## Key Concepts for Conversations
+
+**Frozen core:** The ODE never changes. Contributors add conditioning layers on top. This is why cross-domain transfer works — the physics engine is a coordinate system, not a snapshot.
+
+**Deviation score:** The gap between what the physics predicted and what actually happened. Positive deviation = the system departed from predicted trajectory. This is the accountability metric.
+
+**Contrastive causal training:** The ODE was trained with Pearl's do-calculus as a loss function — every wrong causal direction was penalized. This is why the deviation score reflects cause, not correlation.
+
+**Conditioning layer:** A small network (not the frozen ODE) that teaches the physics engine your specific domain. Domain-specific parameters, interventions, confounders. Sits on top of the frozen core.
+
+**Eval threshold:** The minimum deviation score improvement a conditioning layer must achieve to be registered in the marketplace. The physics decides. No committee.
+
+---
+
+## The Contributor UX Goal
+
+A nurse practitioner who has spent 20 years in ICUs should be able to open this repo, describe what she knows to Claude Code, and end up with a registered conditioning layer — without writing a line of training code herself. Claude Code is the bridge between domain expertise and the physics engine.
+
+The same is true for a structural engineer, a grid operator, or a turbine maintenance tech. If they know what "the physics was right" means in their domain, Claude Code helps them get it into the model.
